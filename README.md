@@ -1,3 +1,4 @@
+[<img src="https://secure.travis-ci.org/dasher/litecoin.png" />](http://travis-ci.org/#!/dasher/litecoin)
 Litecoin - a lite version of Bitcoin optimized for CPU mining using scrypt as a proof of work scheme.
  - 2.5 minute block targets
  - subsidy halves in 840k blocks (~4 years)
