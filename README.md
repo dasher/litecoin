@@ -36,3 +36,8 @@ Issues with no commits will be given a similar warning, and closed after
 labeled 'stale'. 
 
 Check out http://forum.litecoin.net/index.php/board,2.0.html for more info about the development.
+
+
+>>>>>>>>> Placeholder - needs to be updated after the litecoin-project org enables travis
+[<img src="https://secure.travis-ci.org/dasher/litecoin.png" />](http://travis-ci.org/#!/dasher/litecoin)
+
