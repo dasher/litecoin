@@ -182,7 +182,7 @@ bool AddOrphanTx(const CDataStream& vMsg)
     // at most 500 megabytes of orphans:
     if (pvMsg->size() > 5000)
     {
-        printf("ignoring large orphan tx (size: %u, hash: %s)\n", pvMsg->size(), hash.ToString().substr(0,10).c_str());
+        printf("ignoring large orphan tx (size: %u, hash: %s)\n", pvMsg->size(), BlockHashStr(hash).c_str());
         delete pvMsg;
         return false;
     }
@@ -1859,7 +1859,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     // If don't already have its previous block, shunt it off to holding area until we get it
     if (!mapBlockIndex.count(pblock->hashPrevBlock))
     {
-        printf("ProcessBlock: ORPHAN BLOCK, prev=%s\n", BlockHashStr(pblock->hashPrevBlock).c_str());
+        printf("ProcessBlock: ORPHAN BLOCK, hash=%s prev=%s\n", BlockHashStr(hash).c_str(), BlockHashStr(pblock->hashPrevBlock).c_str());
         CBlock* pblock2 = new CBlock(*pblock);
         mapOrphanBlocks.insert(make_pair(hash, pblock2));
         mapOrphanBlocksByPrev.insert(make_pair(pblock2->hashPrevBlock, pblock2));
