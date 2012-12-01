@@ -320,7 +320,7 @@ Value getdifficulty(const Array& params, bool fHelp)
 
 
 // Litecoin: Return average network hashes per second based on last number of blocks.
-int GetNetworkHashPS(int lookup) {
+long GetNetworkHashPS(int lookup) {
     if (pindexBest == NULL)
         return 0;
 
@@ -338,8 +338,8 @@ int GetNetworkHashPS(int lookup) {
 
     double timeDiff = pindexBest->GetBlockTime() - pindexPrev->GetBlockTime();
     double timePerBlock = timeDiff / lookup;
-
-    return (int)(((double)GetDifficulty() * pow(2.0, 32)) / timePerBlock);
+	//printf("Diff: %d TimePerBlock: %d", GetDifficulty(), timePerBlock);
+    return (long)(((double)GetDifficulty() * pow(2.0, 32)) / timePerBlock);
 }
 
 Value getnetworkhashps(const Array& params, bool fHelp)
