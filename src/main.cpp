@@ -2771,6 +2771,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
 
         CInv inv(MSG_TX, tx.GetHash());
         pfrom->AddInventoryKnown(inv);
+        
+        //pfrom->addr
+        printf("   tx[%s] relayed via %s\n", BlockHashStr(tx.GetHash()).c_str(), pfrom->addr.ToString().c_str());
 
         bool fMissingInputs = false;
         if (tx.AcceptToMemoryPool(txdb, true, &fMissingInputs))
@@ -2834,7 +2837,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         CBlock block;
         vRecv >> block;
 
-        printf("received block %s\n", BlockHashStr(block.GetHash()).c_str());
+        printf("received block %s from %s\n", BlockHashStr(block.GetHash()).c_str(), pfrom->addr.ToString().c_str());
         // block.print();
 
         CInv inv(MSG_BLOCK, block.GetHash());
