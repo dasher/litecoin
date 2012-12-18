@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/librpcrawtransaction.a  CMakeFiles/rpcrawtransaction.dir/rpcrawtransaction.cpp.o
+/usr/bin/ranlib ../lib/librpcrawtransaction.a

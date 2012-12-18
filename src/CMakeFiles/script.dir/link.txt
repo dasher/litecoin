@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libscript.a  CMakeFiles/script.dir/script.cpp.o
+/usr/bin/ranlib ../lib/libscript.a

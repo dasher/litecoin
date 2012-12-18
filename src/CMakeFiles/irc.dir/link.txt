@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libirc.a  CMakeFiles/irc.dir/irc.cpp.o
+/usr/bin/ranlib ../lib/libirc.a

@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/dasher/Development/litecoin/litecoin/src/scrypt.c
+scrypt.h
+/home/dasher/Development/litecoin/litecoin/src/scrypt.h
+stdlib.h
+-
+stdint.h
+-
+string.h
+-
+openssl/sha.h
+-
+
+/home/dasher/Development/litecoin/litecoin/src/scrypt.h
+

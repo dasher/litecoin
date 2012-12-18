@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/librpcnet.a  CMakeFiles/rpcnet.dir/rpcnet.cpp.o
+/usr/bin/ranlib ../lib/librpcnet.a

@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libsync.a  CMakeFiles/sync.dir/sync.cpp.o
+/usr/bin/ranlib ../lib/libsync.a

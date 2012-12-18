@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libdb.a  CMakeFiles/db.dir/db.cpp.o
+/usr/bin/ranlib ../lib/libdb.a

@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libcheckpoints.a  CMakeFiles/checkpoints.dir/checkpoints.cpp.o
+/usr/bin/ranlib ../lib/libcheckpoints.a

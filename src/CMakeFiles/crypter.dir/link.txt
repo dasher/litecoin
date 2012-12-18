@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libcrypter.a  CMakeFiles/crypter.dir/crypter.cpp.o
+/usr/bin/ranlib ../lib/libcrypter.a

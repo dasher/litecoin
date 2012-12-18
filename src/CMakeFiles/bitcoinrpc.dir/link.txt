@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libbitcoinrpc.a  CMakeFiles/bitcoinrpc.dir/bitcoinrpc.cpp.o
+/usr/bin/ranlib ../lib/libbitcoinrpc.a

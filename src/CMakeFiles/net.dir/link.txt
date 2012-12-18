@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libnet.a  CMakeFiles/net.dir/net.cpp.o
+/usr/bin/ranlib ../lib/libnet.a

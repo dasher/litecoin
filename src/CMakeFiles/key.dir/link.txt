@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libkey.a  CMakeFiles/key.dir/key.cpp.o
+/usr/bin/ranlib ../lib/libkey.a

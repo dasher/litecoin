@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libaddrman.a  CMakeFiles/addrman.dir/addrman.cpp.o
+/usr/bin/ranlib ../lib/libaddrman.a

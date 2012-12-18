@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libkeystore.a  CMakeFiles/keystore.dir/keystore.cpp.o
+/usr/bin/ranlib ../lib/libkeystore.a

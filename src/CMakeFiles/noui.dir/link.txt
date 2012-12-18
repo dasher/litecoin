@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libnoui.a  CMakeFiles/noui.dir/noui.cpp.o
+/usr/bin/ranlib ../lib/libnoui.a

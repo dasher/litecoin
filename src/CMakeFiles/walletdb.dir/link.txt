@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libwalletdb.a  CMakeFiles/walletdb.dir/walletdb.cpp.o
+/usr/bin/ranlib ../lib/libwalletdb.a

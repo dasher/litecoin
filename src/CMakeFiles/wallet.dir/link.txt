@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libwallet.a  CMakeFiles/wallet.dir/wallet.cpp.o
+/usr/bin/ranlib ../lib/libwallet.a

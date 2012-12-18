@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/librpcdump.a  CMakeFiles/rpcdump.dir/rpcdump.cpp.o
+/usr/bin/ranlib ../lib/librpcdump.a
