@@ -1,6 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2011-2012 The Litecoin Developers
+// Copyright (c) 2011-2012 Litecoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -65,6 +65,7 @@ Object JSONRPCError(int code, const string& message)
     error.push_back(Pair("message", message));
     return error;
 }
+
 void RPCTypeCheck(const Array& params,
                   const list<Value_type>& typesExpected)
 {
@@ -84,6 +85,7 @@ void RPCTypeCheck(const Array& params,
         i++;
     }
 }
+
 void RPCTypeCheck(const Object& o,
                   const map<string, Value_type>& typesExpected)
 {
@@ -225,7 +227,12 @@ Object blockToJSON(const CBlock& block, const CBlockIndex* blockindex)
     return result;
 }
 
+
+
+
+///
 /// Note: This interface may still be subject to change.
+///
 
 string CRPCTable::help(string strCommand) const
 {
@@ -286,7 +293,7 @@ Value stop(const Array& params, bool fHelp)
             "Stop Litecoin server.");
     // Shutdown will take long enough that the response should get back
     StartShutdown();
-    return "Litecoin server has now stopped running!";
+    return "Litecoin server stopping";
 }
 
 
@@ -313,7 +320,7 @@ Value getdifficulty(const Array& params, bool fHelp)
 
 
 // Litecoin: Return average network hashes per second based on last number of blocks.
-int GetNetworkHashPS(int lookup) {
+long GetNetworkHashPS(int lookup) {
     if (pindexBest == NULL)
         return 0;
 
@@ -331,8 +338,8 @@ int GetNetworkHashPS(int lookup) {
 
     double timeDiff = pindexBest->GetBlockTime() - pindexPrev->GetBlockTime();
     double timePerBlock = timeDiff / lookup;
-
-    return (int)(((double)GetDifficulty() * pow(2.0, 32)) / timePerBlock);
+	//printf("Diff: %d TimePerBlock: %d", GetDifficulty(), timePerBlock);
+    return (long)(((double)GetDifficulty() * pow(2.0, 32)) / timePerBlock);
 }
 
 Value getnetworkhashps(const Array& params, bool fHelp)
@@ -2090,7 +2097,6 @@ Value getwork(const Array& params, bool fHelp)
     }
 }
 
-
 Value getblocktemplate(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
@@ -2305,11 +2311,6 @@ Value getblock(const Array& params, bool fHelp)
 
     return blockToJSON(block, pblockindex);
 }
-
-
-
-
-
 
 
 //
@@ -2974,7 +2975,7 @@ void JSONRequest::parse(const Value& valRequest)
     if (valMethod.type() != str_type)
         throw JSONRPCError(-32600, "Method must be a string");
     strMethod = valMethod.get_str();
-    if (strMethod != "getwork" && strMethod != "getblocktemplate")
+    if (strMethod != "getwork" && strMethod != "getmemorypool")
         printf("ThreadRPCServer method=%s\n", strMethod.c_str());
 
     // Parse params

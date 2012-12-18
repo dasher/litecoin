@@ -40,4 +40,8 @@ Check out http://forum.litecoin.net/index.php/board,2.0.html for more info about
 
 >>>>>>>>> Placeholder - needs to be updated after the litecoin-project org enables travis
 [<img src="https://secure.travis-ci.org/dasher/litecoin.png" />](http://travis-ci.org/#!/dasher/litecoin)
+Litecoin - a lite version of Bitcoin optimized for CPU mining using scrypt as a proof of work scheme.
+ - 2.5 minute block targets
+ - subsidy halves in 840k blocks (~4 years)
+ - ~84 million total coins
 
