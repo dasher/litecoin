@@ -1,6 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2011-2012 The Litecoin Developers
+// Copyright (c) 2011-2012 Litecoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -65,6 +65,7 @@ Object JSONRPCError(int code, const string& message)
     error.push_back(Pair("message", message));
     return error;
 }
+
 void RPCTypeCheck(const Array& params,
                   const list<Value_type>& typesExpected)
 {
@@ -84,6 +85,7 @@ void RPCTypeCheck(const Array& params,
         i++;
     }
 }
+
 void RPCTypeCheck(const Object& o,
                   const map<string, Value_type>& typesExpected)
 {
@@ -225,7 +227,12 @@ Object blockToJSON(const CBlock& block, const CBlockIndex* blockindex)
     return result;
 }
 
+
+
+
+///
 /// Note: This interface may still be subject to change.
+///
 
 string CRPCTable::help(string strCommand) const
 {
@@ -286,7 +293,7 @@ Value stop(const Array& params, bool fHelp)
             "Stop Litecoin server.");
     // Shutdown will take long enough that the response should get back
     StartShutdown();
-    return "Litecoin server has now stopped running!";
+    return "Litecoin server stopping";
 }
 
 
@@ -313,7 +320,7 @@ Value getdifficulty(const Array& params, bool fHelp)
 
 
 // Litecoin: Return average network hashes per second based on last number of blocks.
-int GetNetworkHashPS(int lookup) {
+long GetNetworkHashPS(int lookup) {
     if (pindexBest == NULL)
         return 0;
 
@@ -331,8 +338,8 @@ int GetNetworkHashPS(int lookup) {
 
     double timeDiff = pindexBest->GetBlockTime() - pindexPrev->GetBlockTime();
     double timePerBlock = timeDiff / lookup;
-
-    return (int)(((double)GetDifficulty() * pow(2.0, 32)) / timePerBlock);
+	//printf("Diff: %d TimePerBlock: %d", GetDifficulty(), timePerBlock);
+    return (long)(((double)GetDifficulty() * pow(2.0, 32)) / timePerBlock);
 }
 
 Value getnetworkhashps(const Array& params, bool fHelp)
@@ -2090,7 +2097,6 @@ Value getwork(const Array& params, bool fHelp)
     }
 }
 
-
 Value getblocktemplate(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
@@ -2305,11 +2311,6 @@ Value getblock(const Array& params, bool fHelp)
 
     return blockToJSON(block, pblockindex);
 }
-
-
-
-
-
 
 
 //
@@ -2889,18 +2890,22 @@ void ThreadRPCServer2(void* parg)
     // Try a dual IPv6/IPv4 socket, falling back to separate IPv4 and IPv6 sockets
     const bool loopback = !mapArgs.count("-rpcallowip");
     asio::ip::address bindAddress = loopback ? asio::ip::address_v6::loopback() : asio::ip::address_v6::any();
+    printf("RPC Binding to %s on %u\n", bindAddress.to_string().c_str(), GetArg("-rpcport", 9332));
     ip::tcp::endpoint endpoint(bindAddress, GetArg("-rpcport", 9332));
+    boost::system::error_code v6_only_error;
+    boost::shared_ptr<ip::tcp::acceptor> acceptor(new ip::tcp::acceptor(io_service));
 
     boost::signals2::signal<void ()> StopRequests;
 
+    bool fListening = false;
+    std::string strerr;
     try
     {
-        boost::shared_ptr<ip::tcp::acceptor> acceptor(new ip::tcp::acceptor(io_service));
         acceptor->open(endpoint.protocol());
         acceptor->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
 
         // Try making the socket dual IPv6/IPv4 (if listening on the "any" address)
-        boost::system::error_code v6_only_error;
+      
         acceptor->set_option(boost::asio::ip::v6_only(loopback), v6_only_error);
 
         acceptor->bind(endpoint);
@@ -2912,10 +2917,19 @@ void ThreadRPCServer2(void* parg)
                     static_cast<void (ip::tcp::acceptor::*)()>(&ip::tcp::acceptor::close), acceptor.get())
                 .track(acceptor));
 
+        fListening = true;
+    }
+    catch(boost::system::system_error &e)
+    {
+        strerr = strprintf(_("An error occurred while setting up the RPC port %u for listening on IPv6, falling back to IPv4: %s"), endpoint.port(), e.what());
+    }
+
+    try {
         // If dual IPv6/IPv4 failed (or we're opening loopback interfaces only), open IPv4 separately
-        if (loopback || v6_only_error)
+        if (!fListening || loopback || v6_only_error)
         {
             bindAddress = loopback ? asio::ip::address_v4::loopback() : asio::ip::address_v4::any();
+            printf("Previous RPC Binding failed - trying RPC bind to %s on %u\n", bindAddress.to_string().c_str(), GetArg("-rpcport", 9332));
             endpoint.address(bindAddress);
 
             acceptor.reset(new ip::tcp::acceptor(io_service));
@@ -2929,14 +2943,19 @@ void ThreadRPCServer2(void* parg)
             StopRequests.connect(signals2::slot<void ()>(
                         static_cast<void (ip::tcp::acceptor::*)()>(&ip::tcp::acceptor::close), acceptor.get())
                     .track(acceptor));
+            fListening = true;
         }
     }
     catch(boost::system::system_error &e)
     {
-        uiInterface.ThreadSafeMessageBox(strprintf(_("An error occured while setting up the RPC port %i for listening: %s"), endpoint.port(), e.what()),
-                             _("Error"), CClientUIInterface::OK | CClientUIInterface::MODAL);
-        StartShutdown();
-        return;
+        strerr = strprintf(_("An error occurred while setting up the RPC port %u for listening on IPv4: %s"), endpoint.port(), e.what());
+        
+		if (!fListening) {
+			uiInterface.ThreadSafeMessageBox(strprintf(_("An error occured while setting up the RPC port %i for listening: %s"), endpoint.port(), e.what()), _("Error"), CClientUIInterface::OK | CClientUIInterface::MODAL);
+			StartShutdown();
+			return;
+		}        
+        
     }
 
     vnThreadsRunning[THREAD_RPCLISTENER]--;
@@ -2974,7 +2993,7 @@ void JSONRequest::parse(const Value& valRequest)
     if (valMethod.type() != str_type)
         throw JSONRPCError(-32600, "Method must be a string");
     strMethod = valMethod.get_str();
-    if (strMethod != "getwork" && strMethod != "getblocktemplate")
+    if (strMethod != "getwork" && strMethod != "getmemorypool")
         printf("ThreadRPCServer method=%s\n", strMethod.c_str());
 
     // Parse params
