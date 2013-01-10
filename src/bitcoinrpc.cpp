@@ -1,6 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2011-2012 Litecoin Developers
+// Copyright (c) 2011-2012 The Litecoin Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -65,7 +65,6 @@ Object JSONRPCError(int code, const string& message)
     error.push_back(Pair("message", message));
     return error;
 }
-
 void RPCTypeCheck(const Array& params,
                   const list<Value_type>& typesExpected)
 {
@@ -85,7 +84,6 @@ void RPCTypeCheck(const Array& params,
         i++;
     }
 }
-
 void RPCTypeCheck(const Object& o,
                   const map<string, Value_type>& typesExpected)
 {
@@ -227,9 +225,6 @@ Object blockToJSON(const CBlock& block, const CBlockIndex* blockindex)
     return result;
 }
 
-
-
-
 ///
 /// Note: This interface may still be subject to change.
 ///
@@ -293,7 +288,7 @@ Value stop(const Array& params, bool fHelp)
             "Stop Litecoin server.");
     // Shutdown will take long enough that the response should get back
     StartShutdown();
-    return "Litecoin server stopping";
+    return "Litecoin server has now stopped running!";
 }
 
 
@@ -338,6 +333,7 @@ long GetNetworkHashPS(int lookup) {
 
     double timeDiff = pindexBest->GetBlockTime() - pindexPrev->GetBlockTime();
     double timePerBlock = timeDiff / lookup;
+
 	//printf("Diff: %d TimePerBlock: %d", GetDifficulty(), timePerBlock);
     return (long)(((double)GetDifficulty() * pow(2.0, 32)) / timePerBlock);
 }
@@ -2097,6 +2093,7 @@ Value getwork(const Array& params, bool fHelp)
     }
 }
 
+
 Value getblocktemplate(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
@@ -2311,6 +2308,11 @@ Value getblock(const Array& params, bool fHelp)
 
     return blockToJSON(block, pblockindex);
 }
+
+
+
+
+
 
 
 //
@@ -2901,11 +2903,12 @@ void ThreadRPCServer2(void* parg)
     std::string strerr;
     try
     {
+        boost::shared_ptr<ip::tcp::acceptor> acceptor(new ip::tcp::acceptor(io_service));
         acceptor->open(endpoint.protocol());
         acceptor->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
 
         // Try making the socket dual IPv6/IPv4 (if listening on the "any" address)
-      
+        boost::system::error_code v6_only_error;
         acceptor->set_option(boost::asio::ip::v6_only(loopback), v6_only_error);
 
         acceptor->bind(endpoint);
@@ -2952,10 +2955,9 @@ void ThreadRPCServer2(void* parg)
         
 		if (!fListening) {
 			uiInterface.ThreadSafeMessageBox(strprintf(_("An error occured while setting up the RPC port %i for listening: %s"), endpoint.port(), e.what()), _("Error"), CClientUIInterface::OK | CClientUIInterface::MODAL);
-			StartShutdown();
-			return;
+        StartShutdown();
+        return;
 		}        
-        
     }
 
     vnThreadsRunning[THREAD_RPCLISTENER]--;
@@ -2993,7 +2995,7 @@ void JSONRequest::parse(const Value& valRequest)
     if (valMethod.type() != str_type)
         throw JSONRPCError(-32600, "Method must be a string");
     strMethod = valMethod.get_str();
-    if (strMethod != "getwork" && strMethod != "getmemorypool")
+    if (strMethod != "getwork" && strMethod != "getblocktemplate")
         printf("ThreadRPCServer method=%s\n", strMethod.c_str());
 
     // Parse params
